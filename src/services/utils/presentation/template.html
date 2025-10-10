@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HVAC Presentation</title>
+  <style>
+    /* ===== Theme ===== */
+    :root {
+      --primary: #1e40af; /* Blue (primary) */
+      --primary-600: #1d4ed8;
+      --primary-700: #1e3a8a;
+      --secondary: #f97316; /* Orange (secondary) */
+      --secondary-700: #ea580c;
+      --fg: #0f172a; /* Slate-900 */
+      --fg-muted: #475569; /* Slate-600 */
+      --bg: #f8fafc; /* Slate-50 */
+      --card: #ffffff;
+      --border: #e2e8f0; /* Slate-200 */
+      --radius-xl: 20px;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --pad: 18px;
+      --gap: 20px;
+      --shadow-sm: 0 1px 2px rgba(2, 6, 23, 0.06);
+      --shadow-md: 0 8px 24px rgba(2, 6, 23, 0.08);
+      --shadow-lg: 0 20px 40px rgba(2, 6, 23, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      padding: 24px; /* on-screen breathing room; ignored in print */
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--fg);
+      background: radial-gradient(1000px 600px at 10% -20%, rgba(30,64,175,0.08), transparent 60%),
+                  radial-gradient(1000px 600px at 90% 120%, rgba(249,115,22,0.08), transparent 60%),
+                  var(--bg);
+    }
+
+    /* ===== A4 Page Frame (row-oriented) ===== */
+    .page {
+      width: 210mm;              /* A4 width */
+      min-height: 297mm;         /* A4 height */
+      margin: 0 auto;
+      background: linear-gradient(180deg, #eef3ff 0%, #e6efff 60%, #ffffff 100%);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;    /* row-oriented flow: top→bottom */
+    }
+
+    /* Decorative top bar */
+    .accent-bar {
+      height: 8px;
+      background: linear-gradient(90deg, var(--primary) 0%, var(--primary-600) 30%, var(--secondary) 100%);
+      flex: 0 0 auto;
+    }
+
+    .inner {
+      padding: 10mm 16mm 16mm; /* tighter top margin */
+      display: flex;
+      flex-direction: column;
+      row-gap: 6mm; /* tighter vertical spacing */
+      flex: 1 1 auto;
+    }
+
+    /* ===== Header (logo + text, flex row) ===== */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 8mm;
+      text-align: left;
+    }
+    .header-logo { flex: 0 0 auto; width: 55mm; max-width: 55mm; }
+    .header-logo img { display: block; width: 100%; height: auto; }
+    .header-text { display: flex; flex-direction: column; }
+    .header .hero-title { margin: 0 0 4mm; font-size: 26px; line-height: 1.2; color: var(--primary-700); letter-spacing: -0.2px; }
+    .header .hero-subtitle { margin: 0; color: var(--fg-muted); font-size: 14px; }
+
+    /* ===== Hero: flexbox layout (image + copy) ===== */
+    .hero {
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
+      gap: 8mm;
+    }
+
+    .hero-image {
+      position: relative;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      flex: 1 1 45%;
+      min-height: 55mm; /* reserved space for hero image */
+      background: linear-gradient(135deg, rgba(30,64,175,0.12), rgba(249,115,22,0.12));
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-md);
+      display: flex;
+    }
+    .hero-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .hero-copy {
+      flex: 1 1 55%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0;
+    }
+    .hero-title {
+      margin: 0 0 6px;
+      font-size: 26px;
+      line-height: 1.2;
+      color: var(--primary-700);
+      letter-spacing: -0.2px;
+    }
+    .hero-subtitle {
+      margin: 0;
+      color: var(--fg-muted);
+      font-size: 14px;
+    }
+
+    /* ===== Options: single column, stacked ===== */
+    .options-stack {
+      display: grid;
+      grid-template-columns: 1fr; /* always one column for PDF/A4 */
+      gap: 4mm; /* less whitespace between options */
+    }
+
+    .option {
+      position: relative;
+      border-radius: var(--radius-lg);
+      padding: 8mm; /* tighter card padding */
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, #ffffff, #fbfdff);
+      box-shadow: var(--shadow-sm);
+      transition: transform 240ms ease, box-shadow 240ms ease, border-color 240ms ease;
+      break-inside: avoid; /* keep each option intact on print */
+    }
+    .option::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(30,64,175,0.6), rgba(249,115,22,0.6));
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude;
+      pointer-events: none;
+      opacity: 0.35;
+    }
+    .option h2 {
+      margin: 0 0 6px;
+      font-size: 16px;
+      color: var(--primary);
+      letter-spacing: 0.2px;
+    }
+
+    .meta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--fg-muted);
+      margin-bottom: 8px;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(2,6,23,0.08);
+      background: linear-gradient(180deg, rgba(2,6,23,0.04), rgba(2,6,23,0.02));
+      font-weight: 600;
+      color: var(--secondary-700);
+    }
+    .pill .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+    }
+
+    .entry {
+      white-space: pre-wrap;
+      line-height: 1.5;
+      color: #1f2937; /* Gray-800 */
+      font-size: 13.5px;
+    }
+
+    /* ===== Footer with reserved space ===== */
+    .footer-wrap { margin-top: auto; }
+    .footer-spacer { height: 8mm; } /* leave room at bottom */
+
+    .footer {
+      font-size: 11px;
+      color: var(--fg-muted);
+      text-align: center;
+    }
+
+    /* ===== Print styles (for PDF via Playwright/Chromium) ===== */
+    @page { size: A4; margin: 0; }
+    @media print {
+      html, body { height: auto; }
+      body { background: #fff; padding: 0; }
+      .page { width: 210mm; min-height: 297mm; border-radius: 0; box-shadow: none; border: none; }
+      .inner { padding: 10mm 16mm 12mm; }
+      .accent-bar { height: 6px; }
+      .option { page-break-inside: avoid; }
+      .footer { position: static; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="accent-bar" aria-hidden="true"></div>
+    <div class="inner">
+      <!-- Header with logo on the left and text on the right -->
+      <section class="header">
+        <div class="header-logo">
+          <img src="https://private-user-images.githubusercontent.com/93083500/500599991-d9d950c9-de98-46e4-b38c-d1de8678e5f0.jpg?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NjAzNzU4MTQsIm5iZiI6MTc2MDM3NTUxNCwicGF0aCI6Ii85MzA4MzUwMC81MDA1OTk5OTEtZDlkOTUwYzktZGU5OC00NmU0LWIzOGMtZDFkZTg2NzhlNWYwLmpwZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTEwMTMlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUxMDEzVDE3MTE1NFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTExNmNjMWVjMzBmNjFmNTk3MzY4NWNkYTUwMWIwY2ViYmQ1YmFlYzhkODMyYTIwMjk3OTUwOTY5MTE3MDM4ODkmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.E8utyTwJumjOvgzrHqNf_OYXGBTxlKayp-F72JhVI40" alt="Logo Placeholder" />
+        </div>
+        <div class="header-text">
+          <h1 class="hero-title">Wahl Family Heating, Cooling, and Plumbing</h1>
+          <p class="hero-subtitle">10/13/2025, 123 Main Street, Pittsburgh, PA</p>
+        </div>
+      </section>
+
+      <!-- Stacked Options (single column) -->
+      <section class="options-stack">
+        <article class="option">
+          <h2>Option 1</h2>
+          <div class="meta">
+            <span class="pill"><span class="dot"></span> Estimated cost: ${{ (level_1.time * 515) | round(2) }}</span>
+          </div>
+          <div class="entry">{{ level_1.entry }}</div>
+        </article>
+
+        <article class="option">
+          <h2>Option 2</h2>
+          <div class="meta">
+            <span class="pill"><span class="dot"></span> Estimated cost: ${{ (level_2.time * 515) | round(2) }}</span>
+          </div>
+          <div class="entry">{{ level_2.entry }}</div>
+        </article>
+
+        <article class="option">
+          <h2>Option 3</h2>
+          <div class="meta">
+            <span class="pill"><span class="dot"></span> Estimated cost: ${{ (level_3.time * 515) | round(2) }}</span>
+          </div>
+          <div class="entry">{{ level_3.entry }}</div>
+        </article>
+
+        <article class="option">
+          <h2>Option 4</h2>
+          <div class="meta">
+            <span class="pill"><span class="dot"></span> Estimated cost: ${{ (level_4.time * 515) | round(2) }}</span>
+          </div>
+          <div class="entry">{{ level_4.entry }}</div>
+        </article>
+      </section>
+
+      <div class="footer-wrap">
+      <div class="footer-spacer" aria-hidden="true"></div>
+      <footer class="footer">
+        <div>Wahl Family Heating, Cooling & Plumbing • 1 Willow Ave Oakdale PA 15071</div>
+        <div>1-855-GET-WAHL | 412-276-9245 | wahlheatingandcooling.com</div>
+        <div>“We're in your neighborhood—since 1980” | “For a happy home, Get WAHL”</div>
+        <div>PA # PA022302 • Pgh HV # HV00939 • Allegheny MP # HP04202</div>
+      </footer>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

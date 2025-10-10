@@ -1,0 +1,30 @@
+{
+  "id": 2,
+  "sets":
+    [
+      {
+        "question": "What is the issue you're observing?",
+        "answer": "The water heater is leaking from the pressure relief valve and making loud rumbling noises"
+      },
+      {
+        "question": "What system is having the issue?",
+        "answer": "Residential gas water heater, 50 gallon tank"
+      },
+      {
+        "question": "How old is the system?",
+        "answer": "Approximately 12 years old"
+      },
+      {
+        "question": "When was it last serviced?",
+        "answer": "It was last flushed and inspected about 3 years ago"
+      },
+      {
+        "question": "How long are you going to be living in the home?",
+        "answer": "We plan to stay in this home for at least another 10-15 years"
+      },
+      {
+        "question": "Are you looking to replace the system?",
+        "answer": "Yes."
+      }
+    ]
+}
